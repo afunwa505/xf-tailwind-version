@@ -28,48 +28,46 @@ if (isset($_POST['email'])) {
             $statusMsg = "❌ Database error, please try again.";
         } else {
             try {
-                $mail = new PHPMailer(true);
-                $mail->isSMTP();                                            
-                $mail->Host       = 'smtp.gmail.com';                     
-                $mail->SMTPAuth   = true;                                   
-                $mail->Username   = 'afunwaemmanuel505@gmail.com';         
-                $mail->Password   = 'qfbzrwcilpsznjqe';                    
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            
-                $mail->Port       = 465;                                    
+    $mail = new PHPMailer(true);
+    $mail->isSMTP();                                            
+    $mail->Host       = 'smtp.gmail.com';                     
+    $mail->SMTPAuth   = true;                                   
+    $mail->Username   = 'afunwaemmanuel505@gmail.com';         
+    $mail->Password   = 'wpteaevgzhjnerxk';  // <-- use Gmail App Password
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;   // TLS encryption
+    $mail->Port       = 465;                             // TLS port
 
-                $mail->setFrom('afunwaemmanuel505@gmail.com', 'Your Website');
-                $mail->addAddress($emailTo);     
+    $mail->setFrom('afunwaemmanuel505@gmail.com', 'Your Website');
+    $mail->addAddress($emailTo);     
 
-                $mail->isHTML(true);                                  
-                $mail->Subject = 'Password Reset Request';
-                $mail->Body    = "
-                    <h2>Password Reset Request</h2>
-                    <p>You requested to reset your password.</p>
-                    <p>Click the link below to continue:</p>
-                    <a href='http://localhost/xf/resetPassword.php?code=".$code."'>Reset Your Password</a>
-                    <br><br>
-                    <p>If you did not request this, please ignore this email.</p>
-                ";
-                $mail->AltBody = "Click here to reset your password: http://localhost/xf/resetPassword.php?code=".$code;
+    $mail->isHTML(true);                                  
+    $mail->Subject = 'Password Reset Request';
+    $mail->Body    = "
+        <h2>Password Reset Request</h2>
+        <p>You requested to reset your password.</p>
+        <p>Click the link below to continue:</p>
+        <a href='http://localhost/xf/resetPassword.php?code=".$code."'>Reset Your Password</a>
+        <br><br>
+        <p>If you did not request this, please ignore this email.</p>
+    ";
+    $mail->AltBody = "Click here to reset your password: http://localhost/xf/resetPassword.php?code=".$code;
 
-                $mail->SMTPOptions = [
-                    'ssl' => [
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                        'allow_self_signed' => true
-                    ]
-                ];
+    // Debugging (remove in production)
+    $mail->SMTPDebug = 0; // no output
+$mail->Debugoutput = function($str, $level) {
+    error_log("PHPMailer debug [$level]: $str");
+};
 
-                $mail->send();
-                $statusMsg = "✅ Password reset link has been sent to your email.";
-            } catch (Exception $e) {
-                $statusMsg = "❌ Message could not be sent. Error: {$mail->ErrorInfo}";
-            }
-        }
-    } else {
-        $statusMsg = "❌ No account found with that email address.";
-    }
+    $mail->send();
+    $statusMsg = "✅ Password reset link has been sent to your email.";
+} catch (Exception $e) {
+    $statusMsg = "❌ Message could not be sent. Error: {$mail->ErrorInfo}";
 }
+        }
+      
+}
+}
+
 ?>
 
 <!DOCTYPE html>

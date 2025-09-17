@@ -84,7 +84,10 @@
   </div>
 
   <!-- Background Section -->
-  <div class="container1 bg-cover bg-center transition duration-300 w-full" style="background-image: url('./image/jumpers.jpg'); height: 460px;">
+  <div class="container1 bg-cover bg-center transition duration-300 w-full" style="background-image: url('./image/jumpers.jpg');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+   height: 460px;">
     <!-- Optional Background Content -->
   </div>
 

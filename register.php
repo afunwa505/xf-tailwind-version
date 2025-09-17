@@ -12,9 +12,18 @@ if(isset($_POST['submit'])){
     $password2 = mysqli_real_escape_string($conn,$_POST['password2']);
     $email = mysqli_real_escape_string($conn,$_POST['email']);
 
-    $sql = "INSERT INTO register VALUES('$id','$firstName','$lastName','$username','$hash','$email')";
-
-    if(empty($firstName)){
+    // ✅ Check for existing username/email
+    $checkUser = mysqli_query($conn, "SELECT * FROM register WHERE username='$username' OR email='$email'");
+    if(mysqli_num_rows($checkUser) > 0){
+        $row = mysqli_fetch_assoc($checkUser);
+        if($row['username'] === $username){
+            $usernameError = "⚠️ Username already taken";
+        }
+        if($row['email'] === $email){
+            $emailError = "⚠️ Email already registered";
+        }
+    }
+    elseif(empty($firstName)){
         $firstnameError = "Enter your firstname";
     }elseif(empty($lastName)){
         $lastnameError = "Enter your Last Name";
@@ -32,15 +41,20 @@ if(isset($_POST['submit'])){
         $emailError = "Enter your email address";
     }elseif(!filter_var($email,FILTER_VALIDATE_EMAIL)){
         $emailError = "Invalid email address";
-    }elseif(mysqli_query($conn,$sql)){
-        header('location:login.php');
     }else{
-        echo "ERROR: something went wrong!!!"
-            .mysqli_error($conn);
+        $sql = "INSERT INTO register VALUES('$id','$firstName','$lastName','$username','$hash','$email')";
+        if(mysqli_query($conn,$sql)){
+            header('location:login.php');
+            exit();
+        }else{
+            echo "ERROR: something went wrong!!!"
+                .mysqli_error($conn);
+        }
     }
 }
 mysqli_close($conn);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en" class="">
@@ -139,8 +153,8 @@ mysqli_close($conn);
       <div class="text-red-500 text-sm"><?php echo $lastnameError ?></div>
 
       <input type="text" name="username" placeholder="Choose a Username"
-             class="w-full px-3 py-2 border rounded bg-white dark:bg-darkBg dark:text-darkText">
-      <div class="text-red-500 text-sm"><?php echo $usernameError ?></div>
+       class="w-full px-3 py-2 border rounded bg-white dark:bg-darkBg dark:text-darkText">
+<div class="text-red-500 text-sm"><?php echo $usernameError ?></div>
 
       <!-- Password 1 with Eye -->
       <div class="relative">
@@ -159,8 +173,8 @@ mysqli_close($conn);
       <div class="text-red-500 text-sm"><?php echo $password2Error ?></div>
 
       <input type="email" name="email" placeholder="Enter your E-Mail"
-             class="w-full px-3 py-2 border rounded bg-white dark:bg-darkBg dark:text-darkText">
-      <div class="text-red-500 text-sm"><?php echo $emailError ?></div>
+       class="w-full px-3 py-2 border rounded bg-white dark:bg-darkBg dark:text-darkText">
+<div class="text-red-500 text-sm"><?php echo $emailError ?></div>
 
       <input type="submit" name="submit" value="Register"
              class="w-full px-4 py-2 bg-orangeAccent text-darkBg font-bold rounded cursor-pointer">
